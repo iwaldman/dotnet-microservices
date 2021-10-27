@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data;
@@ -25,36 +22,36 @@ namespace PlatformService.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<PlatformReadDto>> GetPlatforms()
         {
-            var platformItems = _repo.GetAllPlatforms();
+            var platformModels = _repo.GetAllPlatforms();
 
-            var results = _mapper.Map<IEnumerable<PlatformReadDto>>(platformItems);
+            var platformReadDtos = _mapper.Map<IEnumerable<PlatformReadDto>>(platformModels);
 
-            return Ok(results);
+            return Ok(platformReadDtos);
         }
 
         [HttpGet("{id}", Name = "GetPlatformById")]
         public ActionResult<PlatformReadDto> GetPlatformById(int id)
         {
-            var platformItem = _repo.GetPlatformById(id);
+            var platformModel = _repo.GetPlatformById(id);
 
-            if (platformItem is null)
+            if (platformModel is null)
             {
                 return NotFound();
             }
 
-            var result = _mapper.Map<PlatformReadDto>(platformItem);
+            var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
 
-            return Ok(result);
+            return Ok(platformReadDto);
         }
 
         [HttpPost]
-        public ActionResult<PlatformReadDto> CreatePlatform(PlatformCreateDto createDto)
+        public ActionResult<PlatformReadDto> CreatePlatform(PlatformCreateDto platformCreateDto)
         {
-            var itemToCreate = _mapper.Map<Platform>(createDto);
-            _repo.CreatePlatform(itemToCreate);
+            var platformModel = _mapper.Map<Platform>(platformCreateDto);
+            _repo.CreatePlatform(platformModel);
             _repo.SaveChanges();
 
-            var platformReadDto = _mapper.Map<PlatformReadDto>(itemToCreate);
+            var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
 
             return CreatedAtRoute(
                 nameof(GetPlatformById),
